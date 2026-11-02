@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>영어 그랑프리 교사 관제실</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="teacher.css">
+</head>
+<body class="teacher">
+
+<!-- 시작: 수업 만들기 -->
+<section id="vStart" class="tstart">
+  <img class="logoBig" src="img/logo.webp" alt="부릉부릉 영어 그랑프리">
+  <div class="cpanel startCard">
+    <h2>교사 관제실</h2>
+    <p>새 수업을 만들면 학생들이 들어올 <b>방 코드 4자리</b>와 QR이 생겨요.<br>학생 <b>자동 배정</b>은 처음부터 켜져 있어요.</p>
+    <label class="pwRow"><span>🔒 교사 비밀번호</span><input type="password" id="tPw" class="tin" autocomplete="current-password" placeholder="비밀번호를 입력하세요"></label>
+    <button class="ib newClass" id="bCreate" style="--img:url(img/b_newclass.webp)" aria-label="새 수업 만들기"><span class="sr">새 수업 만들기</span></button>
+    <button class="nbtn hidden" id="bResume"><span>이전 수업 이어서 열기</span></button>
+    <p class="err" id="startErr"></p>
+    <a class="back" href="./">← 학생 화면으로</a>
+  </div>
+</section>
+
+<div id="vApp" class="tapp hidden">
+  <!-- 왼쪽 메뉴 -->
+  <nav class="tside" id="tabs" aria-label="교사 메뉴">
+    <img class="tlogo" src="img/logo.webp" alt="부릉부릉 영어 그랑프리">
+    <button class="ib menu on" data-v="dash" data-off="m_dash" data-on="m_dash_on" style="--img:url(img/m_dash_on.webp)" aria-label="전체 관리"><span class="sr">전체 관리</span></button>
+    <button class="ib menu" data-v="monitor" data-off="m_monitor" data-on="m_monitor_on" style="--img:url(img/m_monitor.webp)" aria-label="방별 모니터링"><span class="sr">방별 모니터링</span></button>
+    <button class="ib menu" data-v="settings" data-off="m_settings" data-on="m_settings_on" style="--img:url(img/m_settings.webp)" aria-label="게임 설정"><span class="sr">게임 설정</span></button>
+    <button class="ib menu" data-v="questions" data-off="m_questions" data-on="m_questions_on" style="--img:url(img/m_questions.webp)" aria-label="문제 관리"><span class="sr">문제 관리</span></button>
+    <button class="ib menu" data-v="results" data-off="m_results" data-on="m_results_on" style="--img:url(img/m_results.webp)" aria-label="결과 보기"><span class="sr">결과 보기</span></button>
+    <div class="sideCode">
+      <div class="tcode"><b id="code">----</b></div>
+      <div id="qr" class="qr" title="크게 보기"></div>
+      <small>QR을 누르면 크게 보여요</small>
+    </div>
+  </nav>
+
+  <main class="tmain">
+    <header class="thead">
+      <div class="ttitle"><h1>교사 관제실</h1><p>방마다 진행 상황을 한눈에 보고 관리해요.</p></div>
+      <div class="tbtns">
+        <button class="ib tb auto" id="bAuto" style="--img:url(img/t_auto.webp)" aria-label="자동 배정 켜고 끄기"><span class="sr">자동 배정</span><img class="tog" id="autoTog" src="img/tog_on.webp" alt=""></button>
+        <button class="ib tb" id="bAssign" style="--img:url(img/t_assign.webp)" aria-label="지금 배정"><span class="sr">지금 배정</span></button>
+        <button class="ib tb" id="bStart" style="--img:url(img/t_start.webp)" aria-label="대기 방 출발"><span class="sr">대기 방 출발</span></button>
+        <button class="ib tb" id="bPause" style="--img:url(img/t_pause.webp)" aria-label="일시 정지"><span class="sr">일시 정지</span></button>
+        <button class="ib tb" id="bEnd" style="--img:url(img/t_end.webp)" aria-label="전체 경기 종료"><span class="sr">경기 종료</span></button>
+        <button class="ib sq" id="bFull" style="--img:url(img/t_full.webp)" aria-label="전체 화면"><span class="sr">전체 화면</span></button>
+        <button class="ib sq" id="bGear" style="--img:url(img/t_gear.webp)" aria-label="게임 설정"><span class="sr">게임 설정</span></button>
+      </div>
+    </header>
+    <div class="stats" id="stats"></div>
+
+    <!-- 전체 관리 -->
+    <section class="view on" id="v-dash">
+      <div class="dashGrid">
+        <div class="dashLeft">
+          <div class="cpanel">
+            <h3>🚪 학생 입장 안내</h3>
+            <div class="entry"><div id="qr2" class="qr"></div><div><div class="bigCode" id="code2">----</div><p class="url" id="url"></p><p class="muted">QR을 찍거나 주소에 들어가 이름과 방 코드를 넣어요.</p></div></div>
+          </div>
+          <div class="cpanel">
+            <h3>🪑 대기실 <span class="muted" id="lobbyN"></span></h3>
+            <div class="chips" id="lobby"></div>
+          </div>
+          <div class="cpanel">
+            <h3>👥 전체 학생 <span class="muted" id="studN"></span></h3>
+            <div class="tblWrap"><table class="tbl"><thead><tr><th>이름</th><th>상태</th><th>방</th><th>경기</th><th>정답률</th><th></th></tr></thead><tbody id="studs"></tbody></table></div>
+          </div>
+        </div>
+        <div>
+          <div class="roomHead"><h2>🏎️ 경기 방</h2><span class="sp"></span><button class="ib tbs" id="bNewRoom" style="--img:url(img/b_newroom.webp)" aria-label="빈 방 만들기"><span class="sr">빈 방</span></button><button class="ib tbs" id="bAllLobby" style="--img:url(img/t_lobby.webp)" aria-label="끝난 방 모두 대기실로"><span class="sr">끝난 방 모두 대기실로</span></button></div>
+          <div class="roomGrid" id="rooms"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 방별 모니터링 -->
+    <section class="view" id="v-monitor">
+      <div class="monTop">
+        <select id="monSel" class="tsel" aria-label="방 고르기"></select>
+        <span class="monInfo" id="monInfo"></span>
+        <span class="sp"></span>
+        <button class="ib tbs" data-ra="skip" style="--img:url(img/b_skip.webp)" aria-label="이번 라운드 바로 진행"><span class="sr">바로 진행</span></button>
+        <button class="ib tbs" data-ra="rematch" style="--img:url(img/b_rematch.webp)" aria-label="같은 팀 다시"><span class="sr">같은 팀 다시</span></button>
+        <button class="ib tbs" data-ra="pause" style="--img:url(img/t_pause.webp)" aria-label="이 방 멈춤"><span class="sr">이 방 멈춤</span></button>
+        <button class="ib tbs" data-ra="end" style="--img:url(img/t_end.webp)" aria-label="이 방 종료"><span class="sr">이 방 종료</span></button>
+        <button class="ib tbs" data-ra="lobby" style="--img:url(img/t_lobby.webp)" aria-label="대기실로"><span class="sr">대기실로</span></button>
+      </div>
+      <div class="monGrid">
+        <div>
+          <div class="monTrack"><svg id="monTrack" role="img" aria-label="경기 트랙"></svg></div>
+          <div class="npanel" style="margin-top:12px"><img class="nhead" src="img/recent_head.webp" alt="최근 라운드"><div class="nbody"><div class="ncream log" id="monLog"></div></div></div>
+        </div>
+        <div class="monPlayers" id="monPlayers"></div>
+      </div>
+    </section>
+
+    <!-- 게임 설정 -->
+    <section class="view" id="v-settings">
+      <div class="npanel wideP"><img class="nhead hd" src="img/settings_head.webp" alt="게임 설정"><div class="nbody"><div class="ncream">
+        <h3>📚 문제 단원</h3>
+        <p class="muted">한 단원만 고르면 그 단원 문제만 나와요. 여러 단원을 고르면 트랙 구역마다 단원이 달라져 <b>섞여서</b> 나와요. (다음 경기부터 바뀌어요)</p>
+        <div class="unitCards" id="unitCards"></div>
+        <h3 style="margin-top:18px">🏁 경기 설정</h3>
+        <div class="setGrid">
+          <label>바퀴 수 <select class="tsel" id="sLaps"><option value="1">1바퀴 (약 5분)</option><option value="2">2바퀴 (약 10분)</option><option value="3">3바퀴 (약 15분)</option></select></label>
+          <label>라운드 제한 시간 <select class="tsel" id="sRound"><option value="30">30초</option><option value="45">45초</option><option value="60">60초</option><option value="90">90초</option><option value="120">120초</option></select></label>
+          <label>경기 최대 시간 <select class="tsel" id="sLimit"><option value="5">5분</option><option value="8">8분</option><option value="10">10분</option><option value="15">15분</option><option value="20">20분</option><option value="30">30분</option></select></label>
+          <label>한 방 인원 <select class="tsel" id="sSize"><option value="3-5">3~5명 (기본)</option><option value="3-4">3~4명</option><option value="4-5">4~5명</option><option value="2-4">2~4명</option></select></label>
+        </div>
+        <h3 style="margin-top:18px">👥 자동 배정</h3>
+        <label class="toggle"><input type="checkbox" id="sAuto" class="sw"><span>자동 배정 켜기 — 대기실에 3명 이상 모이면 방을 만들고 5초 뒤 출발해요. 경기가 끝나면 25초 뒤 대기실로 돌아가 10초 안에 새 방에 다시 배정돼요. 전 방 친구는 3명 이상 모이지 않아요.</span></label>
+        <label class="toggle" style="margin-top:10px"><input type="checkbox" id="sAi" class="sw"><span>🤖 빈자리 AI 친구로 채우기 — 대기실에 친구가 모자라면 6초 뒤 AI 친구가 빈자리를 채워 바로 출발해요. 경기 중에 학생이 들어오면 AI 자리를 이어받아요. AI는 점수와 결과에 들어가지 않아요.</span></label>
+        <p class="muted">끄면 [지금 배정]으로 방을 만들고 [대기 방 출발]로 시작해요. 전체 관리에서 학생을 다른 방으로 옮길 수도 있어요.</p>
+      </div></div></div>
+    </section>
+
+    <!-- 문제 관리 -->
+    <section class="view" id="v-questions">
+      <div class="npanel wideP"><img class="nhead hd" src="img/questions_head.webp" alt="문제 관리"><div class="nbody"><div class="ncream">
+        <div class="qTools">
+          <select class="tsel" id="qUnit"><option value="">모든 단원</option><option value="10">10단원</option><option value="11">11단원</option><option value="12">12단원</option></select>
+          <select class="tsel" id="qLevel"><option value="">모든 단계</option><option value="1">1단 단어 뜻</option><option value="2">2단 문장 뜻</option><option value="3">3단 빈칸</option><option value="4">4단 대화·순서</option></select>
+          <input class="tin" id="qSearch" placeholder="🔍 문제 검색">
+          <span class="sp"></span>
+          <button class="ib tbs" id="qTpl" style="--img:url(img/b_template.webp)" aria-label="양식 받기"><span class="sr">양식 받기</span></button>
+          <label class="ib tbs" style="--img:url(img/b_upload.webp)" aria-label="엑셀 업로드"><span class="sr">엑셀 업로드</span><input type="file" id="qFile" accept=".xlsx,.xls,.csv" hidden></label>
+          <button class="ib tbs" id="qAddOpen" style="--img:url(img/b_addq.webp)" aria-label="문제 추가"><span class="sr">문제 추가</span></button>
+          <button class="ib tbs" id="qExport" style="--img:url(img/b_download.webp)" aria-label="전체 문제 내려받기"><span class="sr">전체 내려받기</span></button>
+        </div>
+        <p class="muted" id="qInfo"></p>
+        <div class="addQ hidden" id="addQ">
+          <div class="addGrid">
+            <select class="tsel" id="aUnit"><option value="10">10단원</option><option value="11">11단원</option><option value="12">12단원</option></select>
+            <select class="tsel" id="aLevel"><option value="1">1단</option><option value="2" selected>2단</option><option value="3">3단</option><option value="4">4단</option></select>
+            <textarea class="tin" id="aQ" placeholder="문제 (예: 빈칸에 알맞은 말은? We should ____ water.)"></textarea>
+            <input class="tin" id="aC1" placeholder="① 정답"><input class="tin" id="aC2" placeholder="② 오답"><input class="tin" id="aC3" placeholder="③ 오답"><input class="tin" id="aC4" placeholder="④ 오답">
+            <input class="tin" id="aExp" placeholder="해설 (없어도 돼요)">
+            <button class="ib tbs" id="aAdd" style="--img:url(img/b_save.webp)" aria-label="저장"><span class="sr">저장</span></button>
+          </div>
+        </div>
+        <div class="tblWrap tall"><table class="tbl"><thead><tr><th>단원</th><th>단계</th><th>문제</th><th>정답</th><th>오답</th><th>사용 <input type="checkbox" class="ck" id="qAll" title="보이는 문제 모두 켜기/끄기"></th><th></th></tr></thead><tbody id="qBody"></tbody></table></div>
+      </div></div></div>
+    </section>
+
+    <!-- 결과 보기 -->
+    <section class="view" id="v-results">
+      <div class="resTop">
+        <div class="chip3" style="--img:url(img/chip_people.webp)"><b id="cStud">0</b></div>
+        <div class="chip3" style="--img:url(img/chip_flag.webp)"><b id="cGames">0</b></div>
+        <div class="chip3" style="--img:url(img/chip_check.webp)"><b id="cAcc">-</b></div>
+        <span class="sp"></span>
+        <button class="ib tbx" id="rDown" style="--img:url(img/b_excel.webp)" aria-label="결과 엑셀로 저장"><span class="sr">결과 엑셀로 저장</span></button>
+        <button class="ib tbx" id="rReset" style="--img:url(img/b_clear.webp)" aria-label="결과 지우기"><span class="sr">결과 지우기</span></button>
+      </div>
+      <div class="resGrid">
+        <div class="npanel"><img class="nhead" src="img/students_head.webp" alt="학생별 누적 결과"><div class="nbody"><div class="ncream"><div class="tblWrap"><table class="tbl"><thead><tr><th>순위</th><th>이름</th><th>경기</th><th>1등</th><th>점수</th><th>정답률</th><th>10단원</th><th>11단원</th><th>12단원</th></tr></thead><tbody id="rStud"></tbody></table></div></div></div></div>
+        <div class="resRight">
+          <div class="npanel"><img class="nhead" src="img/games_head.webp" alt="경기 기록"><div class="nbody"><div class="ncream"><div class="tblWrap short"><table class="tbl"><thead><tr><th>경기</th><th>방</th><th>단원</th><th>순위 (정답)</th></tr></thead><tbody id="rGames"></tbody></table></div></div></div></div>
+          <div class="npanel"><img class="nhead" src="img/wrong_head.webp" alt="많이 틀린 문제"><div class="nbody"><div class="ncream"><div class="tblWrap short"><table class="tbl"><thead><tr><th>단원</th><th>문제</th><th>정답</th><th>틀림</th></tr></thead><tbody id="rWrong"></tbody></table></div></div></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal hidden" id="qrModal"><div class="cpanel" style="text-align:center;max-width:94vw"><div id="qrBig" class="qrBig"></div><div class="bigCode" id="code3"></div><p class="url" id="url2"></p><button class="nbtn" id="qrClose"><span>닫기</span></button></div></div>
+<div id="toast"></div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="track-data.js"></script>
+<script src="common.js"></script>
+<script src="teacher.js"></script>
+</body>
+</html>
